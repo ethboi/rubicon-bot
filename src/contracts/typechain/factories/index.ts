@@ -3,3 +3,4 @@
 /* eslint-disable */
 export { AggregatorV3InterfaceABI__factory } from "./AggregatorV3InterfaceABI__factory";
 export { BathToken__factory } from "./BathToken__factory";
+export { RubiconMarket__factory } from "./RubiconMarket__factory";

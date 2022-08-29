@@ -1,0 +1,7 @@
+# folders
+dist/
+node_modules/
+src/index.ts
+src/graphql.ts
+src/types/global.d.ts
+.env

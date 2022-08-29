@@ -1,13 +1,13 @@
 import dayjs from 'dayjs'
 import dayjsPluginUTC from 'dayjs/plugin/utc'
-import { MessageEmbed } from 'discord.js'
+import { EmbedBuilder } from 'discord.js'
 import { EventDto } from '../types/EventDto'
 import { ContractType } from '../constants/contractAddresses'
 import { EventType } from '../constants/eventType'
 
 // DISCORD //
-export function EventDiscord(dto: EventDto): MessageEmbed {
-  const embed = new MessageEmbed()
+export function EventDiscord(dto: EventDto): EmbedBuilder {
+  const embed = new EmbedBuilder()
     .setColor('#0099ff')
     .setURL(`${EtherScanTransactionLink(dto.transactionHash)}`)
     .setThumbnail(dto.image ?? '')

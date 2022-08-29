@@ -1,6 +1,6 @@
-import { Client, MessageEmbed, TextChannel } from 'discord.js/typings/index.js'
+import { ActivityType, Client, EmbedBuilder, TextChannel } from 'discord.js'
 
-export async function PostDiscord(embeds: MessageEmbed[], client: Client<boolean>, channelName: string) {
+export async function PostDiscord(embeds: EmbedBuilder[], client: Client<boolean>, channelName: string) {
   try {
     const channels = client.channels.cache
       .filter((value) => (value as TextChannel)?.name == channelName)
@@ -14,5 +14,5 @@ export async function PostDiscord(embeds: MessageEmbed[], client: Client<boolean
 }
 
 export async function defaultActivity(client: Client<boolean>) {
-  client.user?.setActivity(`Deposit & Withdraw`, { type: 'WATCHING' })
+  client.user?.setActivity(`Deposit & Withdraw`, { type: ActivityType.Watching })
 }

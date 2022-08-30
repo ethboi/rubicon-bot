@@ -4,11 +4,12 @@ import { BlockEvent } from '../event'
 import { Context, Telegraf } from 'telegraf'
 import { Update } from 'telegraf/typings/core/types/typegram'
 import { TwitterApi } from 'twitter-api-v2'
-import { LOG_DEPOSIT, LOG_WITHDRAW } from '../constants/topics'
+import { LOG_DEPOSIT, LOG_TRADE, LOG_WITHDRAW } from '../constants/topics'
 import { CONTRACT_ADDRESSES } from '../constants/contractAddresses'
 import { TrackDeposits } from './deposit'
 import { TrackWithdraws } from './withdraw'
 import RpcClient from '../clients/client'
+import { TrackTrades } from './trades'
 
 export async function TrackEvents(
   discordClient: Client<boolean>,
@@ -19,7 +20,7 @@ export async function TrackEvents(
   console.log('### Polling Events ###')
   let blockNumber: number | undefined = undefined
   if (TESTNET) {
-    blockNumber = rpcClient.provider.blockNumber - 5000
+    blockNumber = rpcClient.provider.blockNumber - 10000
   }
 
   BlockEvent.on(
@@ -31,11 +32,14 @@ export async function TrackEvents(
       if (event.topics[0].toLowerCase() === LOG_WITHDRAW) {
         await TrackWithdraws(discordClient, telegramClient, twitterClient, rpcClient, event)
       }
+      if (event.topics[0].toLowerCase() === LOG_TRADE) {
+        await TrackTrades(discordClient, telegramClient, twitterClient, rpcClient, event)
+      }
     },
     {
       startBlockNumber: blockNumber,
       addresses: CONTRACT_ADDRESSES,
-      topics: [LOG_DEPOSIT, LOG_WITHDRAW],
+      topics: [LOG_TRADE],
     },
   )
 }

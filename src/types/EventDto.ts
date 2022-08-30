@@ -16,3 +16,22 @@ export type EventDto = {
   value: number
   ens: string
 }
+
+export type BaseDto = {
+  transactionHash: string
+  timestamp: Date
+  blockNumber: number
+}
+
+export type TradeDto = BaseDto & {
+  tokenInSymbol: string
+  tokenOutSymbol: string
+  amountIn: number
+  valueIn: number
+  amountOut: number
+  valueOut: number
+  imageUrl: string
+  img64: string
+  tokenInEmoji: string
+  tokenOutEmoji: string
+}

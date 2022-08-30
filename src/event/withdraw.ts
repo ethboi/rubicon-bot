@@ -2,7 +2,7 @@ import { Client } from 'discord.js'
 import { Telegraf, Context } from 'telegraf'
 import { Update } from 'telegraf/typings/core/types/typegram'
 import { TwitterApi } from 'twitter-api-v2'
-import { getContractType, getPrice, getAsset, getImage } from './common'
+import { getPrice, getAsset, getImage } from './common'
 import { DiscordChannels } from '../constants/discordChannels'
 import { EventType } from '../constants/eventType'
 import { PostDiscord } from '../integrations/discord'
@@ -11,7 +11,7 @@ import { PostTelegram } from '../integrations/telegram'
 import { TWITTER_ENABLED, TELEGRAM_ENABLED, TELEGRAM_THRESHOLD, DISCORD_ENABLED, DISCORD_THRESHOLD } from '../secrets'
 import { EventDto } from '../types/EventDto'
 import fromBigNumber from '../utils/fromBigNumber'
-import { EventTelegram, EventDiscord } from '../templates/template'
+import { DepositWithdrawDiscord, DepositWithdrawTwitter } from '../templates/depositwithdraw'
 import { toDate } from '../utils/utils'
 import { Event as GenericEvent } from 'ethers'
 import { LogWithdrawEvent } from '../contracts/typechain/BathToken'
@@ -27,7 +27,7 @@ export async function TrackWithdraws(
   genericEvent: GenericEvent,
 ): Promise<void> {
   const event = parseEvent(genericEvent as LogWithdrawEvent)
-  const contractType = getContractType(event.address.toLowerCase())
+  const contractType = event.address.toLowerCase() as unknown as ContractType
   const price = getPrice(contractType)
   let amt = fromBigNumber(event.args.amountWithdrawn)
   if (contractType === ContractType.bathUSDT || contractType === ContractType.bathUSDC) {
@@ -94,14 +94,14 @@ export async function BroadCast(
 
   // Telegram //
   if (TELEGRAM_ENABLED && dto.value >= TELEGRAM_THRESHOLD) {
-    const post = EventTelegram(dto)
-    const test = await PostTelegram(post, telegramClient)
+    // const post = DepositWithdrawTelegram(dto)
+    // const test = await PostTelegram(post, telegramClient)
   }
 
   // Discord //
   if (DISCORD_ENABLED && dto.value >= DISCORD_THRESHOLD) {
-    const embed = [EventDiscord(dto)]
+    const embed = [DepositWithdrawDiscord(dto)]
     const channel = dto.eventType === EventType.Deposit ? DiscordChannels.Deposit : DiscordChannels.Withdrawal
-    await PostDiscord(embed, discordClient, channel)
+    await PostDiscord(embed, discordClient, channel, undefined)
   }
 }

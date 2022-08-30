@@ -6,6 +6,7 @@ export enum ContractType {
   bathUSDT = '0xffbd695bf246c514110f5dae3fa88b8c2f42c411',
   bathSNX = '0xeb5f29afaaa3f44eca8559c3e8173003060e919f',
   bathOP = '0x574a21fe5ea9666dbca804c9d69d8caf21d5322b',
+  rubiconMarket = '0x7a512d3609211e719737e82c7bb7271ec05da70d',
 }
 
 export const CONTRACT_ADDRESSES = [
@@ -16,4 +17,5 @@ export const CONTRACT_ADDRESSES = [
   ContractType.bathUSDT,
   ContractType.bathSNX,
   ContractType.bathOP,
+  ContractType.rubiconMarket,
 ]

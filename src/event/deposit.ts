@@ -2,7 +2,7 @@ import { Client } from 'discord.js'
 import { Telegraf, Context } from 'telegraf'
 import { Update } from 'telegraf/typings/core/types/typegram'
 import { TwitterApi } from 'twitter-api-v2'
-import { getContractType, getPrice, getAsset, getImage } from './common'
+import { getPrice, getAsset, getImage } from './common'
 import { DiscordChannels } from '../constants/discordChannels'
 import { EventType } from '../constants/eventType'
 import { PostDiscord } from '../integrations/discord'
@@ -18,7 +18,7 @@ import {
 } from '../secrets'
 import { EventDto } from '../types/EventDto'
 import fromBigNumber from '../utils/fromBigNumber'
-import { EventTelegram, EventDiscord, DepositWithdrawTwitter } from '../templates/template'
+import { DepositWithdrawDiscord, DepositWithdrawTwitter } from '../templates/depositwithdraw'
 import { toDate } from '../utils/utils'
 import { Event as GenericEvent } from 'ethers'
 import { LogDepositEvent } from '../contracts/typechain/BathToken'
@@ -36,7 +36,7 @@ export async function TrackDeposits(
   genericEvent: GenericEvent,
 ): Promise<void> {
   const event = parseEvent(genericEvent as LogDepositEvent)
-  const contractType = getContractType(event.address.toLowerCase())
+  const contractType = event.address.toLowerCase() as unknown as ContractType
   const price = await getPrice(contractType)
   let amt = fromBigNumber(event.args.depositedAmt)
   if (contractType === ContractType.bathUSDT || contractType === ContractType.bathUSDC) {
@@ -100,9 +100,9 @@ export async function BroadCast(
 
   // Discord //
   if (DISCORD_ENABLED && dto.value >= DISCORD_THRESHOLD) {
-    const embed = [EventDiscord(dto)]
+    const embed = [DepositWithdrawDiscord(dto)]
     const channel = dto.eventType === EventType.Deposit ? DiscordChannels.Deposit : DiscordChannels.Withdrawal
-    await PostDiscord(embed, discordClient, channel)
+    await PostDiscord(embed, discordClient, channel, undefined)
   }
 }
 

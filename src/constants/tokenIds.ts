@@ -17,8 +17,9 @@ export const THALES = ['thales', 'THALES', 18, '18388/small/CLVZJN_C_400x400.png
 export const HND = ['hundred-finance', 'HND', 18, '18445/small/hnd.PNG']
 export const SNX = ['havven', 'SNX', 18, '3406/small/SNX.png']
 export const FXS = ['frax-share', 'FXS', 18, '13423/small/frax_share.png']
-export const WBTC = ['wrapped-bitcoin', 'WBTC', 18, '7598/small/wrapped_bitcoin_wbtc.png']
-export const USDT = ['tether', 'USDT', 18, '325/small/Tether-logo.png']
+export const WBTC = ['wrapped-bitcoin', 'WBTC', 8, '7598/small/wrapped_bitcoin_wbtc.png']
+export const USDT = ['tether', 'USDT', 6, '325/small/Tether-logo.png']
+
 export const TOKEN_IDS: (string | number)[] = [
   LUSD[0],
   USDC[0],

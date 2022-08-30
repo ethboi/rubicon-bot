@@ -39,7 +39,7 @@ export async function TrackEvents(
     {
       startBlockNumber: blockNumber,
       addresses: CONTRACT_ADDRESSES,
-      topics: [LOG_TRADE],
+      topics: [LOG_TRADE, LOG_DEPOSIT, LOG_WITHDRAW],
     },
   )
 }

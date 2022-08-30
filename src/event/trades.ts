@@ -45,7 +45,7 @@ export async function TrackTrades(
   console.log(`Trade Value In: ${valueIn}`)
   console.log(`Trade Value Out: ${valueOut}`)
 
-  if (valueIn >= 1000) {
+  if (valueIn >= DISCORD_THRESHOLD) {
     try {
       let timestamp = 0
       try {

@@ -102,6 +102,6 @@ export async function BroadCast(
   if (DISCORD_ENABLED && dto.value >= DISCORD_THRESHOLD) {
     const embed = [DepositWithdrawDiscord(dto)]
     const channel = dto.eventType === EventType.Deposit ? DiscordChannels.Deposit : DiscordChannels.Withdrawal
-    await PostDiscord(embed, discordClient, channel, undefined)
+    await PostDiscord(embed, discordClient, channel, [])
   }
 }

@@ -33,12 +33,16 @@ export async function TrackTrades(
   genericEvent: GenericEvent,
 ): Promise<void> {
   const event = parseEvent(genericEvent as LogTradeEvent)
-  const tokenIn = getToken(event.args.pay_gem.toLowerCase())
-  const tokenOut = getToken(event.args.buy_gem.toLowerCase())
-  const priceIn = getTokenPrice(event.args.pay_gem.toLowerCase())
-  const priceOut = getTokenPrice(event.args.buy_gem.toLowerCase())
-  const amountIn = fromBigNumber(event.args.pay_amt, tokenIn[2] as number)
-  const amountOut = fromBigNumber(event.args.buy_amt, tokenOut[2] as number)
+
+  const tokenOut = getToken(event.args.pay_gem.toLowerCase())
+  const tokenIn = getToken(event.args.buy_gem.toLowerCase())
+
+  const priceOut = getTokenPrice(event.args.pay_gem.toLowerCase())
+  const priceIn = getTokenPrice(event.args.buy_gem.toLowerCase())
+
+  const amountOut = fromBigNumber(event.args.pay_amt, tokenOut[2] as number)
+  const amountIn = fromBigNumber(event.args.buy_amt, tokenIn[2] as number)
+
   const valueIn = priceIn * amountIn
   const valueOut = priceOut * amountOut
 
@@ -67,8 +71,8 @@ export async function TrackTrades(
         tokenOutSymbol: tokenOut[1] as string,
         imageUrl: '',
         img64: img64,
-        tokenInEmoji: tokenSymbol(event.args.pay_gem.toLowerCase()),
-        tokenOutEmoji: tokenSymbol(event.args.buy_gem.toLowerCase()),
+        tokenInEmoji: tokenSymbol(event.args.buy_gem.toLowerCase()),
+        tokenOutEmoji: tokenSymbol(event.args.pay_gem.toLowerCase()),
       }
 
       await BroadCast(dto, twitterClient, telegramClient, discordClient)
@@ -89,9 +93,7 @@ export async function BroadCast(
   // Twitter //
   if (TWITTER_ENABLED && dto.valueIn >= TWITTER_THRESHOLD) {
     const post = TradeTwitter(dto)
-    console.log(post)
-
-    // await SendTweet(post, twitterClient)
+    await SendTweet(post, twitterClient)
   }
 
   // Telegram //

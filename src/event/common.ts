@@ -84,7 +84,11 @@ export function tokenSymbol(tokenAddress: string) {
 }
 
 export function getTokenPrice(tokenAddress: string): number {
-  return TOKEN_PRICES[getToken(tokenAddress)[0]] as unknown as number
+  const token = getToken(tokenAddress)
+  const tokenId = token[0]
+  const tokenPrice = TOKEN_PRICES[tokenId] as unknown as number
+
+  return tokenPrice
 }
 
 const coingeckoBaseUrl = 'https://assets.coingecko.com/coins/images/'

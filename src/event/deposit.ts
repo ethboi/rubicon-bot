@@ -37,7 +37,7 @@ export async function TrackDeposits(
 ): Promise<void> {
   const event = parseEvent(genericEvent as LogDepositEvent)
   const contractType = event.address.toLowerCase() as unknown as ContractType
-  const price = await getPrice(contractType)
+  const price = getPrice(contractType)
   let amt = fromBigNumber(event.args.depositedAmt)
   if (contractType === ContractType.bathUSDT || contractType === ContractType.bathUSDC) {
     amt = fromBigNumber(event.args.depositedAmt, 6)
@@ -102,7 +102,8 @@ export async function BroadCast(
   if (DISCORD_ENABLED && dto.value >= DISCORD_THRESHOLD) {
     const embed = [DepositWithdrawDiscord(dto)]
     const channel = dto.eventType === EventType.Deposit ? DiscordChannels.Deposit : DiscordChannels.Withdrawal
-    await PostDiscord(embed, discordClient, channel, undefined)
+    //printObject(embed)
+    await PostDiscord(embed, discordClient, channel, [])
   }
 }
 

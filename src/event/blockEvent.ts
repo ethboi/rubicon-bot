@@ -26,20 +26,20 @@ export async function TrackEvents(
   BlockEvent.on(
     rpcClient,
     async (event) => {
-      if (event.topics[0].toLowerCase() === LOG_DEPOSIT) {
-        await TrackDeposits(discordClient, telegramClient, twitterClient, rpcClient, event)
+      if (event[0].topics[0].toLowerCase() === LOG_DEPOSIT) {
+        await TrackDeposits(discordClient, telegramClient, twitterClient, rpcClient, event[0])
       }
-      if (event.topics[0].toLowerCase() === LOG_WITHDRAW) {
-        await TrackWithdraws(discordClient, telegramClient, twitterClient, rpcClient, event)
+      if (event[0].topics[0].toLowerCase() === LOG_WITHDRAW) {
+        await TrackWithdraws(discordClient, telegramClient, twitterClient, rpcClient, event[0])
       }
-      if (event.topics[0].toLowerCase() === LOG_TRADE) {
+      if (event[0].topics[0].toLowerCase() === LOG_TRADE) {
         await TrackTrades(discordClient, telegramClient, twitterClient, rpcClient, event)
       }
     },
     {
       startBlockNumber: blockNumber,
       addresses: CONTRACT_ADDRESSES,
-      topics: [LOG_TRADE, LOG_DEPOSIT, LOG_WITHDRAW],
+      topics: [LOG_TRADE, LOG_WITHDRAW, LOG_DEPOSIT],
     },
   )
 }

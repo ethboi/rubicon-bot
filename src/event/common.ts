@@ -109,7 +109,7 @@ export function getImage(contractType: ContractType | null) {
   }
 
   if (contractType === ContractType.bathETH) {
-    tokenImg = 'https://raw.githubusercontent.com/ethboi/assets/main/weth-small.png'
+    return (tokenImg = 'https://raw.githubusercontent.com/ethboi/assets/main/weth-small.png')
   }
 
   if (contractType === ContractType.bathOP) {

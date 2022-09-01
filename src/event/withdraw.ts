@@ -8,7 +8,14 @@ import { EventType } from '../constants/eventType'
 import { PostDiscord } from '../integrations/discord'
 import { GetEns } from '../integrations/ens'
 import { PostTelegram } from '../integrations/telegram'
-import { TWITTER_ENABLED, TELEGRAM_ENABLED, TELEGRAM_THRESHOLD, DISCORD_ENABLED, DISCORD_THRESHOLD } from '../secrets'
+import {
+  TWITTER_ENABLED,
+  TELEGRAM_ENABLED,
+  TELEGRAM_THRESHOLD,
+  DISCORD_ENABLED,
+  DISCORD_THRESHOLD,
+  TESTNET,
+} from '../secrets'
 import { EventDto } from '../types/EventDto'
 import fromBigNumber from '../utils/fromBigNumber'
 import { DepositWithdrawDiscord, DepositWithdrawTwitter } from '../templates/depositwithdraw'
@@ -18,6 +25,7 @@ import { LogWithdrawEvent } from '../contracts/typechain/BathToken'
 import { BathToken__factory } from '../contracts/typechain'
 import { ContractType } from '../constants/contractAddresses'
 import RpcClient from '../clients/client'
+import printObject from '../utils/printObject'
 
 export async function TrackWithdraws(
   discordClient: Client<boolean>,
@@ -102,6 +110,10 @@ export async function BroadCast(
   if (DISCORD_ENABLED && dto.value >= DISCORD_THRESHOLD) {
     const embed = [DepositWithdrawDiscord(dto)]
     const channel = dto.eventType === EventType.Deposit ? DiscordChannels.Deposit : DiscordChannels.Withdrawal
-    await PostDiscord(embed, discordClient, channel, [])
+    if (TESTNET) {
+      printObject(embed)
+    } else {
+      await PostDiscord(embed, discordClient, channel, [])
+    }
   }
 }

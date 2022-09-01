@@ -2,12 +2,13 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { BlockTag } from '@ethersproject/providers'
 import { Event as GenericEvent } from 'ethers'
 import RpcClient from '../clients/client'
+import { groupBy } from '../utils/utils'
 
 export type EventListener = {
   off: () => void
 }
 
-export type EventListenerCallback = (transfer: GenericEvent) => void
+export type EventListenerCallback = (transfer: GenericEvent[]) => void
 
 export type EventListenerOptions = {
   pollInterval?: number
@@ -49,14 +50,13 @@ export class BlockEvent {
             },
           ])
 
-          if (events.length > 0) {
-            console.debug(`Found ${events.length} events`)
+          // group the events by trx hash
+          const groupedEvents = groupBy(events, (i) => i.transactionHash)
+
+          if (Object.keys(groupedEvents).length > 0) {
+            console.debug(`Found ${Object.keys(groupedEvents).length} grouped events`)
           }
-          await Promise.all(
-            events.map((x) => {
-              callback(x)
-            }),
-          )
+          await Promise.all(Object.keys(groupedEvents).map((x) => callback(groupedEvents[x])))
         } catch (e) {
           console.warn('Failed to get eth_logs')
         }

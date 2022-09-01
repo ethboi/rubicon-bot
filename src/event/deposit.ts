@@ -15,6 +15,7 @@ import {
   DISCORD_ENABLED,
   DISCORD_THRESHOLD,
   TWITTER_THRESHOLD,
+  TESTNET,
 } from '../secrets'
 import { EventDto } from '../types/EventDto'
 import fromBigNumber from '../utils/fromBigNumber'
@@ -88,8 +89,11 @@ export async function BroadCast(
   // Twitter //
   if (TWITTER_ENABLED && dto.value >= TWITTER_THRESHOLD) {
     const post = DepositWithdrawTwitter(dto)
-    //console.log(post)
-    await SendTweet(post, twitterClient)
+    if (TESTNET) {
+      console.log(post)
+    } else {
+      await SendTweet(post, twitterClient)
+    }
   }
 
   // Telegram //
@@ -102,8 +106,11 @@ export async function BroadCast(
   if (DISCORD_ENABLED && dto.value >= DISCORD_THRESHOLD) {
     const embed = [DepositWithdrawDiscord(dto)]
     const channel = dto.eventType === EventType.Deposit ? DiscordChannels.Deposit : DiscordChannels.Withdrawal
-    //printObject(embed)
-    await PostDiscord(embed, discordClient, channel, [])
+    if (TESTNET) {
+      printObject(embed)
+    } else {
+      await PostDiscord(embed, discordClient, channel, [])
+    }
   }
 }
 

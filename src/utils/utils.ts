@@ -31,3 +31,9 @@ export function signed(value: number): string {
   const nonNeg = value > 0 ? value : value * -1
   return `${value > 0 ? '+' : '-'}${nonNeg.toFixed(2)}`
 }
+
+export const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
+  arr.reduce((groups, item) => {
+    ;(groups[key(item)] ||= []).push(item)
+    return groups
+  }, {} as Record<K, T[]>)

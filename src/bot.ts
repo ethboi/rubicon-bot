@@ -6,7 +6,7 @@ import { Context, Telegraf } from 'telegraf'
 import { Update } from 'telegraf/typings/core/types/typegram'
 import { TelegramClient } from './clients/telegramClient'
 import { defaultActivity } from './integrations/discord'
-import { optimismInfuraProvider } from './clients/ethersClient'
+import { alchemyProvider } from './clients/ethersClient'
 import { TrackEvents } from './event/blockEvent'
 import { GetPrices } from './integrations/coingecko'
 import { PricingJob } from './schedule'
@@ -18,17 +18,14 @@ let twitterClient: TwitterApi
 let telegramClient: Telegraf<Context<Update>>
 
 export async function initializeBot() {
-  const rpcClient = new RpcClient(optimismInfuraProvider)
-
-  await SetUpDiscord()
-  await SetUpTwitter()
-  //await SetUpTelegram()
-
+  const rpcClient = new RpcClient(alchemyProvider)
   global.ENS = {}
   global.TOKEN_PRICES = {}
   global.TOKEN_IMAGES = {}
 
-  await GetPrices()
+  await Promise.all([SetUpDiscord(), SetUpTwitter(), GetPrices()])
+  //await SetUpTelegram()
+
   await TrackEvents(discordClient, telegramClient, twitterClient, rpcClient)
   PricingJob()
 }

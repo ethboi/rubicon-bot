@@ -17,7 +17,7 @@ let discordClient: Client<boolean>
 let twitterClient: TwitterApi
 let telegramClient: Telegraf<Context<Update>>
 
-export async function initializeBot() {
+export async function goBot() {
   const rpcClient = new RpcClient(alchemyProvider)
   global.ENS = {}
   global.TOKEN_PRICES = {}

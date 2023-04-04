@@ -8,11 +8,10 @@
     "yarn": "1.x"
   },
   "scripts": {
-    "start:bot": "ts-node-dev --files --respawn src/app.ts",
-    "start": "ts-node --transpile-only src/app.ts --env prod",
-    "lint:ts": "eslint --ext .js,.ts .",
-    "lint:ts:fix": "yarn lint:ts --fix",
-    "format": "prettier --write \"**/*.+(js|ts|json)\"",
+    "dev": "ts-node-dev --files --respawn src/app.ts",
+    "clean": "rimraf ./build",
+    "build": "yarn clean && npx tsc",
+    "start": "node build/app.js",
     "deploycmds": "tsc && node ./deploy-commands.js",
     "generate-types": "yarn typechain --target ethers-v5 --out-dir src/contracts/typechain src/contracts/abis/*.json"
   },
@@ -21,9 +20,8 @@
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@ethersproject/units": "^5.7.0",
-    "@types/coingecko-api": "^1.0.10",
+    "axios": "^1.3.2",
     "canvas": "^2.10.2",
-    "coingecko-api": "^1.0.10",
     "dayjs": "^1.11.6",
     "discord.js": "^14.6.0",
     "dotenv": "^16.0.3",

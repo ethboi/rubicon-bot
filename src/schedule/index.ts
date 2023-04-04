@@ -1,5 +1,5 @@
 import { Job, scheduleJob } from 'node-schedule'
-import { GetPrices } from '../integrations/coingecko'
+import { GetPrices } from '../integrations/prices'
 
 export function PricingJob(): void {
   scheduleJob('*/20 * * * *', async () => {

@@ -29,40 +29,44 @@ export class BlockEvent {
       let prevBlock = block
 
       const poll = async () => {
-        const latestBlock = await rpcClient.provider.getBlock('latest')
-        const fromBlockNumber = prevBlock.number + 1
-        const toBlockNumber = latestBlock.number
-        if (fromBlockNumber >= toBlockNumber) {
-          setTimeout(poll, ms)
-          return
-        }
-        console.debug(
-          `Querying block range: ${fromBlockNumber} to ${toBlockNumber} (${toBlockNumber - fromBlockNumber} blocks)`,
-        )
-
         try {
-          const events: GenericEvent[] = await rpcClient.provider.send('eth_getLogs', [
-            {
-              fromBlock: BigNumber.from(fromBlockNumber).toHexString(),
-              toBlock: BigNumber.from(toBlockNumber).toHexString(),
-              address: options?.addresses, // the address field represents the address of the contract emitting the log.
-              topics: [options?.topics],
-            },
-          ])
-
-          // group the events by trx hash
-          const groupedEvents = groupBy(events, (i) => i.transactionHash)
-
-          if (Object.keys(groupedEvents).length > 0) {
-            console.debug(`Found ${Object.keys(groupedEvents).length} grouped events`)
+          const latestBlock = await rpcClient.provider.getBlock('latest')
+          const fromBlockNumber = prevBlock.number + 1
+          const toBlockNumber = latestBlock.number
+          if (fromBlockNumber >= toBlockNumber) {
+            setTimeout(poll, ms)
+            return
           }
-          await Promise.all(Object.keys(groupedEvents).map((x) => callback(groupedEvents[x])))
-        } catch (e) {
-          console.warn('Failed to get eth_logs')
-        }
+          console.debug(
+            `Querying block range: ${fromBlockNumber} to ${toBlockNumber} (${toBlockNumber - fromBlockNumber} blocks)`,
+          )
 
-        // Poll
-        prevBlock = latestBlock
+          try {
+            const events: GenericEvent[] = await rpcClient.provider.send('eth_getLogs', [
+              {
+                fromBlock: BigNumber.from(fromBlockNumber).toHexString(),
+                toBlock: BigNumber.from(toBlockNumber).toHexString(),
+                address: options?.addresses, // the address field represents the address of the contract emitting the log.
+                topics: [options?.topics],
+              },
+            ])
+
+            // group the events by trx hash
+            const groupedEvents = groupBy(events, (i) => i.transactionHash)
+
+            if (Object.keys(groupedEvents).length > 0) {
+              console.debug(`Found ${Object.keys(groupedEvents).length} grouped events`)
+            }
+            await Promise.all(Object.keys(groupedEvents).map((x) => callback(groupedEvents[x])))
+          } catch (e) {
+            console.warn('Failed to get eth_logs')
+          }
+
+          // Poll
+          prevBlock = latestBlock
+        } catch (err) {
+          console.log(err)
+        }
         setTimeout(poll, ms)
       }
       timeout = setTimeout(poll, ms)

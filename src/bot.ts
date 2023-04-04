@@ -8,7 +8,7 @@ import { TelegramClient } from './clients/telegramClient'
 import { defaultActivity } from './integrations/discord'
 import { alchemyProvider } from './clients/ethersClient'
 import { TrackEvents } from './event/blockEvent'
-import { GetPrices } from './integrations/coingecko'
+import { GetPrices } from './integrations/prices'
 import { PricingJob } from './schedule'
 import RpcClient from './clients/client'
 import { TwitterClient } from './clients/twitterClient'
@@ -17,13 +17,15 @@ let discordClient: Client<boolean>
 let twitterClient: TwitterApi
 let telegramClient: Telegraf<Context<Update>>
 
-export async function goBot() {
+export async function Run() {
   const rpcClient = new RpcClient(alchemyProvider)
   global.ENS = {}
   global.TOKEN_PRICES = {}
   global.TOKEN_IMAGES = {}
 
-  await Promise.all([SetUpDiscord(), SetUpTwitter(), GetPrices()])
+  await GetPrices()
+
+  await Promise.all([SetUpDiscord(), SetUpTwitter()])
   //await SetUpTelegram()
 
   await TrackEvents(discordClient, telegramClient, twitterClient, rpcClient)

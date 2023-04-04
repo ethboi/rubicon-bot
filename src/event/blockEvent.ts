@@ -20,19 +20,19 @@ export async function TrackEvents(
   console.log('### Polling Events ###')
   let blockNumber: number | undefined = undefined
   if (TESTNET) {
-    blockNumber = rpcClient.provider.blockNumber - 10000
+    blockNumber = rpcClient.provider.blockNumber - 100000
   }
 
   BlockEvent.on(
     rpcClient,
     async (event) => {
-      if (event[0].topics[0].toLowerCase() === LOG_DEPOSIT) {
+      if (event[0].topics[0].toLowerCase() === LOG_DEPOSIT.toLowerCase()) {
         await TrackDeposits(discordClient, telegramClient, twitterClient, rpcClient, event[0])
       }
-      if (event[0].topics[0].toLowerCase() === LOG_WITHDRAW) {
+      if (event[0].topics[0].toLowerCase() === LOG_WITHDRAW.toLowerCase()) {
         await TrackWithdraws(discordClient, telegramClient, twitterClient, rpcClient, event[0])
       }
-      if (event[0].topics[0].toLowerCase() === LOG_TRADE) {
+      if (event[0].topics[0].toLowerCase() === LOG_TRADE.toLowerCase()) {
         await TrackTrades(discordClient, telegramClient, twitterClient, rpcClient, event)
       }
     },

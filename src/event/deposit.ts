@@ -2,7 +2,7 @@ import { Client } from 'discord.js'
 import { Telegraf, Context } from 'telegraf'
 import { Update } from 'telegraf/typings/core/types/typegram'
 import { TwitterApi } from 'twitter-api-v2'
-import { getPrice, getAsset, getImage } from './common'
+import { GetPrice, GetToken } from './common'
 import { DiscordChannels } from '../constants/discordChannels'
 import { EventType } from '../constants/eventType'
 import { PostDiscord } from '../integrations/discord'
@@ -38,15 +38,18 @@ export async function TrackDeposits(
 ): Promise<void> {
   const event = parseEvent(genericEvent as LogDepositEvent)
   const contractType = event.address.toLowerCase() as unknown as ContractType
-  const price = getPrice(contractType)
-  let amt = fromBigNumber(event.args.depositedAmt)
-  if (contractType === ContractType.bathUSDT || contractType === ContractType.bathUSDC) {
-    amt = fromBigNumber(event.args.depositedAmt, 6)
+  const token = GetToken(contractType)
+
+  if (!token) {
+    return
   }
+
+  const price = GetPrice(token)
+  const amt = fromBigNumber(event.args.depositedAmt, token.decimals)
   const value = price * amt
 
   console.log(`Deposit Value: ${value}`)
-  if (value >= DISCORD_THRESHOLD) {
+  if (value >= Number(DISCORD_THRESHOLD)) {
     try {
       let timestamp = 0
       try {
@@ -58,12 +61,12 @@ export async function TrackDeposits(
       const dto: EventDto = {
         eventType: EventType.Deposit,
         user: event.args.depositor,
-        asset: getAsset(contractType),
+        asset: token.asset,
         amt: amt,
         transactionHash: event.transactionHash,
         contractAddress: event.address,
         contractType: contractType,
-        image: getImage(contractType),
+        image: token.logo,
         blockNumber: event.blockNumber,
         timestamp: toDate(timestamp),
         price: price,
@@ -87,7 +90,7 @@ export async function BroadCast(
   discordClient: Client<boolean>,
 ): Promise<void> {
   // Twitter //
-  if (TWITTER_ENABLED && dto.value >= TWITTER_THRESHOLD) {
+  if (TWITTER_ENABLED && dto.value >= Number(TWITTER_THRESHOLD)) {
     const post = DepositWithdrawTwitter(dto)
     if (TESTNET) {
       console.log(post)
@@ -96,14 +99,8 @@ export async function BroadCast(
     }
   }
 
-  // Telegram //
-  if (TELEGRAM_ENABLED && dto.value >= TELEGRAM_THRESHOLD) {
-    // const post = EventTelegram(dto)
-    // const test = await PostTelegram(post, telegramClient)
-  }
-
   // Discord //
-  if (DISCORD_ENABLED && dto.value >= DISCORD_THRESHOLD) {
+  if (DISCORD_ENABLED && dto.value >= Number(DISCORD_THRESHOLD)) {
     const embed = [DepositWithdrawDiscord(dto)]
     const channel = dto.eventType === EventType.Deposit ? DiscordChannels.Deposit : DiscordChannels.Withdrawal
     if (TESTNET) {

@@ -24,10 +24,7 @@ export async function Run() {
   global.TOKEN_IMAGES = {}
 
   await GetPrices()
-
   await Promise.all([SetUpDiscord(), SetUpTwitter()])
-  //await SetUpTelegram()
-
   await TrackEvents(discordClient, telegramClient, twitterClient, rpcClient)
   PricingJob()
 }

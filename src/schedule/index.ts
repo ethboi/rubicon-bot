@@ -1,13 +1,8 @@
-import { Job, scheduleJob } from 'node-schedule'
+import { scheduleJob } from 'node-schedule'
 import { GetPrices } from '../integrations/prices'
 
-export function PricingJob(): void {
+export function PricingJob() {
   scheduleJob('*/20 * * * *', async () => {
-    GetPrices()
+    await GetPrices()
   })
 }
-
-// Monday / Wednesday / Friday (as this resets each build)
-export const TriWeeklyJobs: Job = scheduleJob('0 0 * * 1,3,5', async () => {
-  // do stuff
-})

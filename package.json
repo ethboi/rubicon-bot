@@ -1,7 +1,7 @@
 {
-  "name": "polynomial-bot",
+  "name": "rubicon-bot",
   "version": "1.1.0",
-  "description": "Polynomial bot",
+  "description": "Rubicon bot",
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --files --respawn src/app.ts",

@@ -3,10 +3,6 @@
   "version": "1.1.0",
   "description": "Polynomial bot",
   "license": "MIT",
-  "engines": {
-    "node": "16.x",
-    "yarn": "1.x"
-  },
   "scripts": {
     "dev": "ts-node-dev --files --respawn src/app.ts",
     "clean": "rimraf ./build",
